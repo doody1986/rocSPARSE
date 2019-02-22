@@ -50,8 +50,6 @@ static __device__ void mcscmnn_general_device(rocsparse_int M,
     rocsparse_int nwf = hipGridDim_x * hipBlockDim_x / WF_SIZE;
     rocsparse_int row = lid + hipBlockIdx_y * WF_SIZE;
 
-    // rocsparse_int colB = col * ldb;
-    // rocsparse_int colC = col * ldc;
     rocsparse_int rowA = row;
     rocsparse_int rowC = row;
 
@@ -69,20 +67,17 @@ static __device__ void mcscmnn_general_device(rocsparse_int M,
         {
             rocsparse_int k = j + lid;
 
-            __syncthreads();
-
             shared_row[wid][lid] = (k < col_end) ? csc_row_ind[k] - idx_base : 0;
             shared_val[wid][lid] = (k < col_end) ? alpha * csc_val[k] : static_cast<T>(0);
 
             __syncthreads();
-
-            for(rocsparse_int i = 0; i < WF_SIZE && row < M; ++i)
+            for(rocsparse_int i = 0; i < WF_SIZE && rowA < M; ++i)
             {
-                sum = fma(A[rowA + shared_row[wid][i]*lda], shared_val[wid][i], sum);
+                sum = fma(shared_val[wid][i], A[rowA + shared_row[wid][i]*lda], sum);
             }
         }
 
-        if(row < M)
+        if(rowC < M)
         {
             if(beta == 0.0)
             {
