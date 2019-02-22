@@ -45,6 +45,7 @@ set(rocsparse_source
 
 # Level3
   src/level3/rocsparse_csrmm.cpp
+  src/level3/rocsparse_mcscm.cpp
 
 # Preconditioner
   src/precond/rocsparse_csrilu0.cpp

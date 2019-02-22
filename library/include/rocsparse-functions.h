@@ -1900,6 +1900,149 @@ rocsparse_status rocsparse_zcsrmm(rocsparse_handle handle,
                                   rocsparse_double_complex* C,
                                   rocsparse_int ldc);
 */
+
+/*! \ingroup level3_module
+ *  \brief dense matrix sparse matrix multiplication using CSC storage format
+ *
+ *  \details
+ *  \p rocsparse_csrmm multiplies the scalar \f$\alpha\f$ with a dense \f$m \times k\f$
+ *  matrix \f$A\f$, and the dense \f$k \times n\f$ matrix \f$B\f$, defined in CSC storage
+ *  format, and adds the result to the dense \f$m \times n\f$ matrix \f$C\f$ that
+ *  is multiplied by the scalar \f$\beta\f$, such that
+ *  \f[
+ *    C := \alpha \cdot op(A) \cdot op(B) + \beta \cdot C,
+ *  \f]
+ *  with
+ *  \f[
+ *    op(A) = \left\{
+ *    \begin{array}{ll}
+ *        A,   & \text{if trans_A == rocsparse_operation_none} \\
+ *        A^T, & \text{if trans_A == rocsparse_operation_transpose} \\
+ *        A^H, & \text{if trans_A == rocsparse_operation_conjugate_transpose}
+ *    \end{array}
+ *    \right.
+ *  \f]
+ *  and
+ *  \f[
+ *    op(B) = \left\{
+ *    \begin{array}{ll}
+ *        B,   & \text{if trans_B == rocsparse_operation_none} \\
+ *        B^T, & \text{if trans_B == rocsparse_operation_transpose} \\
+ *        B^H, & \text{if trans_B == rocsparse_operation_conjugate_transpose}
+ *    \end{array}
+ *    \right.
+ *  \f]
+ *
+ *  \code{.c}
+ *      for(i = 0; i < ldc; ++i)
+ *      {
+ *          for(j = 0; j < n; ++j)
+ *          {
+ *              C[i][j] = beta * C[i][j];
+ *
+ *              for(k = csc_col_ptr[j]; k < csc_col_ptr[j + 1]; ++k)
+ *              {
+ *                  C[i][j] += alpha * A[i][csc_row_ind[k]] * csc_val[k];
+ *              }
+ *          }
+ *      }
+ *  \endcode
+ *
+ *  \note
+ *  This function is non blocking and executed asynchronously with respect to the host.
+ *  It may return before the actual computation has finished.
+ *
+ *  @param[in]
+ *  handle      handle to the rocsparse library context queue.
+ *  @param[in]
+ *  trans_A     matrix \f$A\f$ operation type.
+ *  @param[in]
+ *  trans_B     matrix \f$B\f$ operation type.
+ *  @param[in]
+ *  m           number of rows of the dense matrix \f$op(A)\f$.
+ *  @param[in]
+ *  n           number of columns of the sparse CSC matrix \f$B\f$ and \f$C\f$.
+ *  @param[in]
+ *  k           number of columns of the dense matrix \f$op(A)\f$.
+ *  @param[in]
+ *  alpha       scalar \f$\alpha\f$.
+ *  @param[in]
+ *  A           array of dimension of A.
+ *  @param[in]
+ *  lda         leading dimension of \f$A\f$.
+ *  @param[in]
+ *  nnz         number of non-zero entries of the sparse CSR matrix \f$A\f$.
+ *  @param[in]
+ *  descr       descriptor of the sparse CSC matrix \f$B\f$. Currently, only
+ *              \ref rocsparse_matrix_type_general is supported.
+ *  @param[in]
+ *  csc_val     array of \p nnz elements of the sparse CSC matrix \f$B\f$.
+ *  @param[in]
+ *  csc_col_ptr array of \p n+1 elements that point to the start of every col of the
+ *              sparse CSC matrix \f$B\f$.
+ *  @param[in]
+ *  csc_row_ind array of \p nnz elements containing the row indices of the sparse
+ *              CSC matrix \f$B\f$.
+ *  @param[in]
+ *  beta        scalar \f$\beta\f$.
+ *  @param[inout]
+ *  C           array of dimension \f$ldc \times n\f$.
+ *  @param[in]
+ *  ldc         leading dimension of \f$C\f$, must be at least \f$\max{(1, n)}\f$.
+ *
+ *  \retval     rocsparse_status_success the operation completed successfully.
+ *  \retval     rocsparse_status_invalid_handle the library context was not initialized.
+ *  \retval     rocsparse_status_invalid_size \p m, \p n, \p k, \p nnz, \p ldb or \p ldc
+ *              is invalid.
+ *  \retval     rocsparse_status_invalid_pointer \p descr, \p alpha, \p csr_val,
+ *              \p csr_row_ptr, \p csr_col_ind, \p B, \p beta or \p C pointer is invalid.
+ *  \retval     rocsparse_status_arch_mismatch the device is not supported.
+ *  \retval     rocsparse_status_not_implemented
+ *              \p trans_A != \ref rocsparse_operation_none or
+ *              \ref rocsparse_matrix_type != \ref rocsparse_matrix_type_general.
+ *
+ *  \par Example
+ *  TBD
+ */
+/**@{*/
+ROCSPARSE_EXPORT
+rocsparse_status rocsparse_smcscm(rocsparse_handle handle,
+                                  rocsparse_operation trans_A,
+                                  rocsparse_operation trans_B,
+                                  rocsparse_int m,
+                                  rocsparse_int n,
+                                  rocsparse_int k,
+                                  const float* alpha,
+                                  const float* A,
+                                  rocsparse_int lda,
+                                  rocsparse_int nnz,
+                                  const rocsparse_mat_descr descr,
+                                  const float* csc_val,
+                                  const rocsparse_int* csc_col_ptr,
+                                  const rocsparse_int* csc_row_ind,
+                                  const float* beta,
+                                  float* C,
+                                  rocsparse_int ldc);
+
+ROCSPARSE_EXPORT
+rocsparse_status rocsparse_dmcscm(rocsparse_handle handle,
+                                  rocsparse_operation trans_A,
+                                  rocsparse_operation trans_B,
+                                  rocsparse_int m,
+                                  rocsparse_int n,
+                                  rocsparse_int k,
+                                  const double* alpha,
+                                  const double* A,
+                                  rocsparse_int lda,
+                                  rocsparse_int nnz,
+                                  const rocsparse_mat_descr descr,
+                                  const double* csc_val,
+                                  const rocsparse_int* csc_col_ptr,
+                                  const rocsparse_int* csc_row_ind,
+                                  const double* beta,
+                                  double* C,
+                                  rocsparse_int ldc);
+
 /**@}*/
 
 /*
