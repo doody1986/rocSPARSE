@@ -89,6 +89,11 @@ typedef struct _rocsparse_mat_info* rocsparse_mat_info;
 extern "C" {
 #endif
 
+typedef enum rocsparse_im2col_type_ {
+    rocsparse_im2col_nchw                   = 0,
+    rocsparse_im2col_nhwc                   = 1
+} rocsparse_im2col_type;
+
 /*! \ingroup types_module
  *  \brief Specify whether the matrix is to be transposed or not.
  *

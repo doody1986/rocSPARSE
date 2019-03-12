@@ -2547,6 +2547,53 @@ rocsparse_status rocsparse_dcsrilu0(rocsparse_handle handle,
  */
 
 /*! \ingroup conv_module
+ *  \brief Convert a Image data to Col matrix
+ *
+ *  \details
+ *  \p rocsparse_im2col converts the Image data to its Col representation for GEMM
+ *
+ *  \note
+ *  This function is non blocking and executed asynchronously with respect to the host.
+ *  It may return before the actual computation has finished. TBD
+ *
+ */
+ROCSPARSE_EXPORT
+rocsparse_status rocsparse_sim2col(rocsparse_handle handle,
+                                   const float* im,
+                                   rocsparse_int n,
+                                   rocsparse_int c,
+                                   rocsparse_int h,
+                                   rocsparse_int w,
+                                   rocsparse_int wei_h,
+                                   rocsparse_int wei_w,
+                                   rocsparse_int out_h,
+                                   rocsparse_int out_w,
+                                   rocsparse_int pad_h,
+                                   rocsparse_int pad_w,
+                                   rocsparse_int stride_h,
+                                   rocsparse_int stride_w,
+                                   rocsparse_im2col_type type,
+                                   float* col);
+
+ROCSPARSE_EXPORT
+rocsparse_status rocsparse_dim2col(rocsparse_handle handle,
+                                   const double* im,
+                                   rocsparse_int n,
+                                   rocsparse_int c,
+                                   rocsparse_int h,
+                                   rocsparse_int w,
+                                   rocsparse_int wei_h,
+                                   rocsparse_int wei_w,
+                                   rocsparse_int out_h,
+                                   rocsparse_int out_w,
+                                   rocsparse_int pad_h,
+                                   rocsparse_int pad_w,
+                                   rocsparse_int stride_h,
+                                   rocsparse_int stride_w,
+                                   rocsparse_im2col_type type,
+                                   double* col);
+
+/*! \ingroup conv_module
  *  \brief Convert a sparse CSR matrix into a sparse COO matrix
  *
  *  \details

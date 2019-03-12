@@ -60,4 +60,5 @@ set(rocsparse_source
   src/conversion/rocsparse_identity.cpp
   src/conversion/rocsparse_csrsort.cpp
   src/conversion/rocsparse_coosort.cpp
+  src/conversion/rocsparse_im2col.cpp
 )
